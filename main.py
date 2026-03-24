@@ -1,5 +1,5 @@
-from gui.app import InterfazLaboratorio
+from gui.app import InterfazPrincipal
 
-if __name__ == "__main__":
-    app = InterfazLaboratorio()
+if name == "main":
+    app = InterfazPrincipal()
     app.mainloop()
