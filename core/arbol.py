@@ -2,33 +2,51 @@ from modelos.nodo import Nodo
 
 class ArbolSintactico:
     """Construye el árbol binario y calcula anulable, primera_pos, ultima_pos y siguiente_pos."""
-    def __init__(self, regex_postfija):
+    def __init__(self, regex_postfija, lista_acciones=None):
         self.regex = regex_postfija
+        self.acciones = lista_acciones if lista_acciones else []
         self.raiz = None
-        self.siguiente_pos = {}  # Diccionario: id_posicion -> set(id_posiciones)
-        self.hojas = {}          # Diccionario: id_posicion -> caracter
+        self.siguiente_pos = {}  
+        self.hojas = {}          
+        self.acciones_pos = {}   
         self.contador_pos = 1
+        self.contador_reglas = 0 
         self.construir_arbol()
         
     def construir_arbol(self):
         pila = []
         for char in self.regex:
-            if char in {'*', '+', '?'}: # Operadores unarios
+            if char in {'*', '+', '?'}: 
                 nodo = Nodo(char)
                 nodo.hijo_izq = pila.pop()
                 pila.append(nodo)
-            elif char in {'.', '|'}:    # Operadores binarios
+            elif char in {'.', '|'}:    
                 nodo = Nodo(char)
                 nodo.hijo_der = pila.pop()
                 nodo.hijo_izq = pila.pop()
                 pila.append(nodo)
-            else:                       # Es una hoja (operando)
+            else:                       
                 if char == 'ε':
                     nodo = Nodo(char)
                 else:
-                    nodo = Nodo(char, self.contador_pos)
+                    accion_actual = None
+                    if char == '#':
+                        if self.contador_reglas < len(self.acciones):
+                            accion_actual = self.acciones[self.contador_reglas]
+                            self.contador_reglas += 1
+                            
+                    # --- FIX ESCAPADO DE CARACTERES ---
+                    # Devolvemos el disfraz a su caracter literal original
+                    mapa_inverso = {'þ': '+', 'ÿ': '*', 'ß': '?', 'æ': '|', 'ð': '(', 'ñ': ')', 'ø': '.'}
+                    char_real = mapa_inverso.get(char, char)
+                    
+                    nodo = Nodo(char_real, self.contador_pos, accion_actual)
                     self.siguiente_pos[self.contador_pos] = set()
-                    self.hojas[self.contador_pos] = char
+                    self.hojas[self.contador_pos] = char_real
+                    
+                    if accion_actual:
+                        self.acciones_pos[self.contador_pos] = accion_actual
+                        
                     self.contador_pos += 1
                 pila.append(nodo)
         
@@ -60,7 +78,6 @@ class ArbolSintactico:
             nodo.primera_pos = nodo.hijo_izq.primera_pos.union(nodo.hijo_der.primera_pos) if nodo.hijo_izq.anulable else set(nodo.hijo_izq.primera_pos)
             nodo.ultima_pos = nodo.hijo_der.ultima_pos.union(nodo.hijo_izq.ultima_pos) if nodo.hijo_der.anulable else set(nodo.hijo_der.ultima_pos)
             
-            # Cálculo de siguiente_pos
             for i in nodo.hijo_izq.ultima_pos:
                 self.siguiente_pos[i].update(nodo.hijo_der.primera_pos)
                 
@@ -68,20 +85,17 @@ class ArbolSintactico:
             nodo.anulable = True
             nodo.primera_pos = set(nodo.hijo_izq.primera_pos)
             nodo.ultima_pos = set(nodo.hijo_izq.ultima_pos)
-            # Cálculo de siguiente_pos
             for i in nodo.ultima_pos:
                 self.siguiente_pos[i].update(nodo.primera_pos)
                 
-        elif nodo.valor == '+': # Cerradura Positiva (Agregada para el Lab)
+        elif nodo.valor == '+': # Cerradura Positiva
             nodo.anulable = nodo.hijo_izq.anulable
             nodo.primera_pos = set(nodo.hijo_izq.primera_pos)
             nodo.ultima_pos = set(nodo.hijo_izq.ultima_pos)
-            # Cálculo de siguiente_pos (Idéntico a Kleene)
             for i in nodo.ultima_pos:
                 self.siguiente_pos[i].update(nodo.primera_pos)
                 
-        elif nodo.valor == '?': # Opcional (Agregada para el Lab)
+        elif nodo.valor == '?': # Opcional
             nodo.anulable = True
             nodo.primera_pos = set(nodo.hijo_izq.primera_pos)
             nodo.ultima_pos = set(nodo.hijo_izq.ultima_pos)
-            # '?' no añade nada a siguiente_pos
