@@ -19,7 +19,7 @@ Este proyecto implementa un generador de analizadores léxicos desde cero, basad
 ##  Características Principales
 
 * **Pipeline de Compilación Completo:** Cubre desde la lectura y parsing del archivo `.yal`, hasta la generación de código independiente.
-* **Interfaz Gráfica (GUI) Moderna:** Entorno tipo IDE desarrollado con CustomTkinter ("Dark Mode") que incluye panel de edición y consola. Utiliza la filosofía *Fail Fast* para resaltar errores léxicos.
+* **Interfaz Gráfica (GUI) Moderna:** Entorno tipo IDE desarrollado con CustomTkinter que incluye panel de edición y consola. Utiliza la filosofía *Fail Fast* para resaltar errores léxicos.
 * **Algoritmo Maximal Munch:** El escáner generado aplica la estrategia de la coincidencia más larga para extraer el lexema.
 * **Visualización de Grafos:** Integración con la librería externa Graphviz para exportar diagramas de transición de alta calidad de los autómatas compilados.
 
