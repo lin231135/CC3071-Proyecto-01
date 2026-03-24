@@ -1,147 +1,72 @@
-# Laboratorio 02: Minimización de AFD
+# Generador de analizadores léxicos
 
-**Universidad Valle de Guatemala**
+### Universidad del Valle de Guatemala - Diseño de Lenguajes de Programación
 
-**Curso:** CC3071 - Diseño de Lenguajes de Programación
-**Laboratorio:** 02 - Minimización de Autómatas Finitos Deterministas
 
----
 
-## Descripción
-
-Implementación del Laboratorio 02: Conversión de expresiones regulares a AFD y minimización de estados.
-El proyecto mantiene una estructura modular para el preprocesamiento, generación, simulación y minimización.
-
-- **Preprocesador:** Valida y normaliza la expresión regular, convierte infijo a postfijo.
-- **Árbol sintáctico:** Construye el árbol de la expresión regular a partir de postfijo.
-- **Generador de AFD:** Genera un AFD directo desde el árbol sintáctico.
-- **Simulador:** Evalúa cadenas y determina aceptación/rechazo.
-- **Minimizador:** Reduce el AFD a su versión mínima conservando el lenguaje.
-- **Interfaz gráfica:** Permite ingresar expresiones, generar AFD, y comparar con versión minimizada.
+* Cindy Gualim (21226)
+* Javier Linares (231135)
+* Gadiel Ocaña (231270)
 
 ---
 
-## Estructura del Proyecto
+Este proyecto implementa un generador de analizadores léxicos desde cero, basado en la especificación YALex. El sistema lee un archivo de reglas léxicas (.yal), construye los autómatas finitos deterministas (AFD) correspondientes utilizando algoritmos fundamentales de la teoría de compiladores, y genera un programa ejecutable capaz de escanear texto plano.
 
-```
-CC3071-Proyecto-01/
-├── main.py                      # Punto de entrada - Inicia la interfaz gráfica
-├── requirements.txt             # Dependencias del proyecto
-├── .gitignore                   # Configuración de Git
-├── README.md                    # Este archivo
-│
-├── core/                        # Núcleo del compilador
-│   ├── preprocesador.py         # Formateo y conversión infijo → postfijo
-│   ├── arbol.py                 # Construcción del árbol sintáctico
-│   ├── generador_afd.py         # Conversión directa de regex a AFD
-│   ├── minimizador.py           # Minimización de AFD
-│   └── simulador.py             # Motor de simulación de cadenas
-│
-├── gui/                         # Interfaz gráfica de usuario
-│   ├── app.py                   # Aplicación principal (Tkinter/CustomTkinter)
-│   └── visualizador.py          # Renderizado de grafos (árbol y AFD)
-│
-└── modelos/                     # Estructuras de datos
-    ├── estado.py                # Definición de estados del AFD
-    └── nodo.py                  # Definición de nodos del árbol sintáctico
-```
+**Nota importante:** El sistema fue diseñado desde cero sin utilizar librerías nativas o externas de expresiones regulares, implementando todo el análisis a través de árboles sintácticos y autómatas.
 
 ---
 
-## Requisitos
+##  Características Principales
 
-- Python 3.8 o superior
-- pip
-
-### Dependencias
-
-```
-customtkinter>=5.0
-pillow>=9.0
-networkx>=2.6
-graphviz>=0.20
-```
+* **Pipeline de Compilación Completo:** Cubre desde la lectura y parsing del archivo `.yal`, hasta la generación de código independiente.
+* **Interfaz Gráfica (GUI) Moderna:** Entorno tipo IDE desarrollado con CustomTkinter ("Dark Mode") que incluye panel de edición y consola. Utiliza la filosofía *Fail Fast* para resaltar errores léxicos.
+* **Algoritmo Maximal Munch:** El escáner generado aplica la estrategia de la coincidencia más larga para extraer el lexema.
+* **Visualización de Grafos:** Integración con la librería externa Graphviz para exportar diagramas de transición de alta calidad de los autómatas compilados.
 
 ---
 
-## Ejecución
+##  Fundamentos Teóricos y Algoritmos
 
-```bash
-python main.py
-```
+El motor de compilación se fundamenta estrictamente en la literatura del "Libro del Dragón" (Aho, Lam, Sethi y Ullman). Implementa los siguientes algoritmos:
 
-La aplicación permite:
-- Ingresar expresiones regulares
-- Generar y visualizar el AFD y su versión minimizada
-- Simular cadenas paso a paso
-- Ver y comparar estados antes y después de minimización
+* **Algoritmo Shunting Yard (Dijkstra):** Para convertir la expresión de notación infija a postfija respetando la precedencia de operadores.
+* **Cálculo de Funciones de Posición:** Recorrido en post-orden sobre el árbol sintáctico para calcular `anulable`, `primera_pos`, `ultima_pos` y la tabla `siguiente_pos`.
+* **Construcción Directa de AFD:** Generación directa de los estados del Autómata Finito Determinista utilizando la tabla `siguiente_pos`, evitando construir el AFN de Thompson.
+* **Minimización de Estados:** Optimización del autómata reduciendo estados redundantes mediante un algoritmo de particionamiento iterativo.
 
 ---
 
-## Flujo de Procesamiento
+##  Arquitectura del Sistema
 
-```
-Expresión Regular (infija)
-           ↓
-   Preprocesador
-           ↓
-Expresión Regular (postfija)
-           ↓
-    Árbol Sintáctico
-           ↓
-   Generador de AFD
-           ↓
-    AFD Completo
-           ↓
-   Simulador
-           ↓
-  Minimización
-           ↓
- AFD Minimizado
-```
+El software sigue una arquitectura modular en capas:
+
+* `lector_yalex.py`: Análisis léxico manual del archivo `.yal` y aislamiento de reglas.
+* `preprocesador.py`: Acondiciona las expresiones y las convierte a notación postfija.
+* `arbol.py`: Construcción del Árbol Sintáctico y cálculo de las cuatro funciones matemáticas.
+* `generador_afd.py`: Transformación del árbol sintáctico en un AFD.
+* `minimizador.py`: Optimización del AFD agrupando estados equivalentes.
+* `generador_codigo.py`: Inyección de la matriz de transiciones en la plantilla ejecutable final (`scanner_generado.py`).
 
 ---
 
-## Laboratorio 02: Minimización de AFD
+##  Casos de Prueba Incluidos
 
-[![Video del laboratorio 2](https://img.youtube.com/vi/_9mDtbiSLpc/maxresdefault.jpg)](https://www.youtube.com/watch?v=_9mDtbiSLpc)
+Se diseñaron tres pares de archivos de prueba incrementando progresivamente la complejidad:
 
-Video del Lab 02: https://www.youtube.com/watch?v=_9mDtbiSLpc
-
-### Cambios implementados
-
-- Se agregó `core/minimizador.py`
-- Se modificó `gui/app.py` para mostrar minimización y pruebas
-
-### Expresiones y pruebas realizadas
-
-#### Expresión 1: "Ya Mínima"
-- Expresión: `(a|b)*abb`
-- Pruebas:
-  - Acepta: `abaabb`
-  - Rechaza: `abba`
-
-#### Expresión 2: "Se Reduce"
-- Expresión: `a(c|d)z|b(c|d)z`
-- Pruebas:
-  - Acepta: `bdz`
-  - Rechaza: `abz`
+* **Baja (`baja.yal`):** Enfocada en operaciones aritméticas elementales y operadores básicos.
+* **Media (`media.yal`):** Detección de palabras reservadas, números con decimales y cadenas de texto.
+* **Alta (`alta.yal`):** Simula el analizador de un lenguaje tipo C/Java incorporando tipos de datos y operadores lógicos.
 
 ---
 
-## Detalles de Implementación
+##  Tecnologías Utilizadas
 
-- El algoritmo maneja correctamente la precedencia de operadores
-- La conversión a AFD se realiza sin requerir determinización posterior
-- El minimizador encuentra clases equivalentes de estados y genera un AFD mínimo
-- La interfaz permite visualizar cada etapa del proceso
+* Python 3.x
+* CustomTkinter (GUI)
+* Graphviz (Visualización de Autómatas)
 
----
 
-## Limitaciones Conocidas
 
-- Solo soporta caracteres simples (a-z, 0-9)
-- No incluye caracteres especiales expandidos (rangos como `[a-z]`)
-- La visualización gráfica requiere que Graphviz esté instalado en el sistema
 
----
+
+
