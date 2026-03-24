@@ -1,0 +1,8 @@
+let digito = ['0'-'9']
+let numero = digito+
+
+rule gettoken = 
+  numero { return INT }
+| "+" { return PLUS }
+| "-" { return MINUS }
+| "*" { return MULT }

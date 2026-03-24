@@ -1,0 +1,24 @@
+(* Analizador de Complejidad Media *)
+let espacio = " "
+let digito = ['0'-'9']
+let numero = "-"? digito+
+let decimal = numero "." digito+
+let min = ['a'-'z']
+let may = ['A'-'Z']
+let letra = min | may
+let identificador = letra (letra|digito)*
+let comillas = '"'
+let cadena = comillas (letra|digito|espacio)* comillas
+
+rule tokens = 
+    espacio       { IGNORAR }
+  | "if"          { print("Palabra reservada: IF") }
+  | "else"        { print("Palabra reservada: ELSE") }
+  | "print"       { print("Palabra reservada: PRINT") }
+  | decimal       { print("Numero Decimal") }
+  | numero        { print("Numero Entero") }
+  | cadena        { print("Cadena de Texto") }
+  | identificador { print("Identificador") }
+  | ">"           { print("Operador: Mayor que") }
+  | "<"           { print("Operador: Menor que") }
+  | "="           { print("Operador: Asignacion") }

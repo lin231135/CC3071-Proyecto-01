@@ -1,0 +1,17 @@
+(* Analizador de Complejidad Baja *)
+let espacio = " "
+let digito = ['0'-'9']
+let numero = "-"? digito+
+let min = ['a'-'z']
+let may = ['A'-'Z']
+let letra = min | may
+let identificador = letra (letra|digito)*
+
+rule tokens = 
+    espacio       { IGNORAR }
+  | identificador { print("Identificador") }
+  | numero        { print("Numero Entero") }
+  | "+"           { print("Operador de Suma") }
+  | "-"           { print("Operador de Resta") }
+  | "*"           { print("Operador de Multiplicacion") }
+  | "="           { print("Operador de Asignacion") }

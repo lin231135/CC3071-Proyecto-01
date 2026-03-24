@@ -1,0 +1,33 @@
+(* Analizador de Complejidad Alta - Mini Lenguaje *)
+let espacio = " "
+let digito = ['0'-'9']
+let numero = "-"? digito+
+let decimal = numero "." digito+
+let min = ['a'-'z']
+let may = ['A'-'Z']
+let letra = min | may
+let identificador = letra (letra|digito)*
+let comillas = '"'
+let cadena = comillas (letra|digito|espacio|"."|":"|"!")* comillas
+
+rule tokens = 
+    espacio       { IGNORAR }
+  | "while"       { print("Keyword: WHILE") }
+  | "return"      { print("Keyword: RETURN") }
+  | "int"         { print("Keyword: INT") }
+  | "float"       { print("Keyword: FLOAT") }
+  | decimal       { print("Tipo: DECIMAL") }
+  | numero        { print("Tipo: ENTERO") }
+  | cadena        { print("Tipo: STRING") }
+  | identificador { print("IDENTIFICADOR") }
+  | "=="          { print("Logico: IGUALDAD") }
+  | "!="          { print("Logico: DIFERENTE") }
+  | ">="          { print("Logico: MAYOR O IGUAL") }
+  | "<="          { print("Logico: MENOR O IGUAL") }
+  | "="           { print("Asignacion") }
+  | "+"           { print("Aritmetico: SUMA") }
+  | ";"           { print("Puntuacion: PUNTO Y COMA") }
+  | "("           { print("Agrupacion: PARENTESIS ABRE") }
+  | ")"           { print("Agrupacion: PARENTESIS CIERRA") }
+  | "{"           { print("Agrupacion: LLAVE ABRE") }
+  | "}"           { print("Agrupacion: LLAVE CIERRA") }

@@ -1,0 +1,39 @@
+BAJA
+
+Valido:
+
+varA = 15 + 20 * -3
+
+Error:
+
+varB = @15 + ?
+
+-----------------------------------------------------------
+MEDIA
+
+Valido:
+
+if nota > 60.5 print "aprobado" else print "reprobado"
+
+Error:
+
+if $nota < 10 "error
+
+-----------------------------------------------------------
+ALTA
+
+Valido:
+
+int contador = 0 ;
+while ( contador <= 10.5 ) {
+    contador = contador + 1 ;
+}
+return "fin del ciclo!" ;
+
+Error:
+
+
+float ^salario = 1500.00 ;
+while ( salario == 0 ) {
+    return ~ ;
+}
